@@ -1,73 +1,78 @@
-import {getBagInformation} from "@/lib/getBagData";
-import {DecryptFlowRequest, EncryptFlowResponse, getPrivateKey} from "@/lib/utils";
-
+import { getBagInformation } from "@/lib/getBagData";
+import {
+  DecryptFlowRequest,
+  EncryptFlowResponse,
+  getPrivateKey,
+} from "@/lib/utils";
 
 export async function POST(request: Request) {
-    const body = await request.json();
-    console.log('initialBody', body);
+  const body = await request.json();
+  console.log("initialBody", body);
 
-    const privateKey = getPrivateKey();
+  const privateKey = getPrivateKey();
 
+  const { decryptedBody, aesKeyBuffer, initialVectorBuffer } =
+    DecryptFlowRequest(body, privateKey);
 
-    const {decryptedBody, aesKeyBuffer, initialVectorBuffer} = DecryptFlowRequest(
-        body,
-        privateKey,
+  console.log("body", decryptedBody);
+
+  const { screen, data, version, action } = decryptedBody;
+
+  if (decryptedBody["action"] && decryptedBody["action"] === "ping") {
+    const pingData: any = {
+      version,
+      screen: "BAG_RESULT_SCREEN",
+      data: {
+        status: "active",
+      },
+    };
+
+    const pingRes = EncryptFlowResponse(
+      pingData,
+      aesKeyBuffer,
+      initialVectorBuffer,
     );
 
-    console.log('body', decryptedBody);
+    return new Response(pingRes);
+  }
 
-    const {screen, data, version, action} = decryptedBody;
+  //get bag data
+  const query = `${data["postcode"]} ${data["huisnummer"]}`;
+  const { success, data: bagData } = await getBagInformation(query);
 
-    if (decryptedBody['action'] && decryptedBody['action'] === 'ping') {
+  let screenData: any;
 
-        const pingData: any = {
-            version,
-            screen: "BAG_RESULT_SCREEN",
-            data: {
-                status: "active"
-            },
-        };
+  console.log("bag", bagData);
 
-        const pingRes = EncryptFlowResponse(pingData, aesKeyBuffer, initialVectorBuffer);
+  if (!success || !bagData) {
+    screenData = {
+      version,
+      screen: "BAG_INPUT_SCREEN",
+      data: {
+        bag_error: true,
+      },
+    };
+  } else {
+    screenData = {
+      version,
+      screen: "BAG_RESULT_SCREEN",
+      data: {
+        bag_data: {
+          ...bagData,
+          oppervlakte: `${bagData.oppervlakte}`,
+        },
+      },
+    };
+  }
+  //set screen data
 
-        return new Response(pingRes);
-    }
+  // Return the response as plaintext
+  const res = EncryptFlowResponse(
+    screenData,
+    aesKeyBuffer,
+    initialVectorBuffer,
+  );
+  console.log(res);
 
-
-    //get bag data
-    const query = `${data['postcode']} ${data['huisnummer']}`;
-    const {success, data: bagData} = await getBagInformation(query);
-
-    let screenData: any;
-
-    console.log('bag', bagData);
-
-    if (!success || !bagData) {
-        screenData = {
-            version,
-            screen: "BAG_INPUT_SCREEN",
-            data: {
-                bag_error: true,
-            }
-        }
-    } else {
-        screenData = {
-            version,
-            screen: "BAG_RESULT_SCREEN",
-            data: {
-                bag_data: {
-                    ...bagData,
-                    oppervlakte: `${bagData.oppervlakte}`
-                }
-            },
-        };
-    }
-    //set screen data
-
-
-    // Return the response as plaintext
-    const res = EncryptFlowResponse(screenData, aesKeyBuffer, initialVectorBuffer);
-    console.log(res);
-
-    return new Response(res);
+  return new Response(res);
 }
