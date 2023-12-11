@@ -1,0 +1,648 @@
+{
+  "version": "2.1",
+  "data_api_version": "3.0",
+  "routing_model": {
+    "START": [
+      "WELCOME"
+    ],
+    "WELCOME": [
+      "BAG_INPUT_SCREEN",
+      "FINAL",
+      "FAQ"
+    ],
+    "FAQ": [],
+    "BAG_INPUT_SCREEN": [
+      "BAG_RESULT_SCREEN"
+    ],
+    "BAG_RESULT_SCREEN": [
+      "UTILITY_USAGE_SCREEN"
+    ],
+    "UTILITY_USAGE_SCREEN": [
+      "RADIO_QUESTION"
+    ],
+    "RADIO_QUESTION": [
+      "ADVIES",
+      "HEEFT_ALLES"
+    ],
+    "ADVIES": [
+      "FINAL"
+    ]
+  },
+  "data_channel_uri": "https://90fb-141-224-212-206.ngrok-free.app/api/flow_main",
+  "screens": [
+    {
+      "id": "START",
+      "title": "[DEMO] Gemeente Deventer",
+      "data": {},
+      "layout": {
+        "type": "SingleColumnLayout",
+        "children": [
+          {
+            "type": "Image",
+            "src": "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",
+            "scale-type": "contain",
+            "height": 70,
+            "width": 325
+          },
+          {
+            "type": "TextHeading",
+            "text": "[DEMO] Gemeente Deventer"
+          },
+          {
+            "type": "TextBody",
+            "text": "Een demonstratie van de nieuwe manier van flows in CommuniQate met als voorbeeld: \"Gemeente Deventer\"."
+          },
+          {
+            "type": "TextCaption",
+            "text": "Druk op \"Starten\" om van start te gaan."
+          },
+          {
+            "type": "Footer",
+            "label": "Starten",
+            "on-click-action": {
+              "name": "data_exchange",
+              "payload": {
+                "bag_error": false
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "WELCOME",
+      "title": "Welkom bij Gemeente Deventer",
+      "data": {},
+      "layout": {
+        "type": "SingleColumnLayout",
+        "children": [
+          {
+            "type": "TextHeading",
+            "text": "Gemeente Deventer"
+          },
+          {
+            "type": "TextBody",
+            "text": "Hier kan je 24 uur per dag, 7 dagen per week vrijblijvend advies krijgen op het gebied van energiebesparing en verduurzaming."
+          },
+          {
+            "type": "TextCaption",
+            "text": "Laten we beginnen! Kies één van de drie opties hieronder:"
+          },
+          {
+            "type": "Form",
+            "name": "form",
+            "children": [
+              {
+                "type": "RadioButtonsGroup",
+                "name": "keuze",
+                "required": true,
+                "data-source": [
+                  {
+                    "id": "Direct Advies",
+                    "title": "Direct Advies",
+                    "description": "Plan een direct afspraak in om een vrijblijvende afspraak in te plannen met één van onze energiecoaches."
+                  },
+                  {
+                    "id": "Direct Plannen",
+                    "title": "Direct Plannen",
+                    "description": "Wanneer je voor deze optie kiest brengen we via WhatsApp je huidige situatie in kaart, geven we je een kort advies en kun je vervolgens een afspraak plannen om dit advies concreet te maken met één van onze energiecoaches."
+                  },
+                  {
+                    "id": "FAQ",
+                    "title": "Veelgestelde Vragen",
+                    "description": "Krijg antwoord op de meestgestelde vragen omtrent energiebesparing en verduurzaming."
+                  }
+                ],
+                "on-select-action": {
+                  "name": "data_exchange",
+                  "payload": {
+                    "keuze": "${form.keuze}"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "FAQ",
+      "title": "Veelgestelde vragen",
+      "layout": {
+        "type": "SingleColumnLayout",
+        "children": [
+          {
+            "type": "TextHeading",
+            "text": "Veelgestelde Vragen"
+          },
+          {
+            "type": "TextBody",
+            "font-weight": "bold",
+            "text": "Subsidie"
+          },
+          {
+            "type": "TextCaption",
+            "text": "Via de ISDE-subsidie kun je 15% tot 30% terugkrijgen van de kosten de je maakt. De aanvraag doe je online. Moet je even voor gaan zitten, maar is wel goed te doen. Kijk op https://www.rvo.nl/subsidies-financiering/isde/woningeigenaren voor info. Kom je er niet uit, bel ons dan op 06 290 633 07.\n\nDaarnaast geeft de gemeente Deventer subsidie voor isolatie. Je huis moet dan wel een WOZ-waarde hebben van minder dan 340.000 euro. Kijk op deventer.nl voor info. Deze subsidie is vanaf ongeveer februari 2024 beschikbaar."
+          },
+          {
+            "type": "TextBody",
+            "font-weight": "bold",
+            "text": "Geld Lenen"
+          },
+          {
+            "type": "TextCaption",
+            "text": "Het Nationaal Warmtefonds heeft een Energiebespaarlening met zeer lage rente. Lees de voorwaarden op https://www.warmtefonds.nl/particulieren/voorwaarden-energiebespaarlening.\n\nJe kunt ook geld lenen door je hypotheek te verhogen. Veel banken rekenen een lagere rente als je het geld gebruikt voor woningverduurzaming. Het verhogen van je hypotheek is maatwerk. Neem dus contact op met een financieel adviseur. "
+          },
+          {
+            "type": "TextBody",
+            "font-weight": "bold",
+            "text": "Isoleren"
+          },
+          {
+            "type": "TextCaption",
+            "text": "Bij spouwmuurisolatie moet je rekening houden met vleermuizen. Deze kunnen in de spouw leven. Vleermuizen zijn beschermde dieren. Als je gaat isoleren, vraag dan aan het isolatiebedrijf hoe zij vleermuizen beschermen."
+          },
+          {
+            "type": "TextBody",
+            "font-weight": "bold",
+            "text": "Ventileren"
+          },
+          {
+            "type": "TextCaption",
+            "text": "Als je gaat isoleren, vergeet dan niet om je huis ook beter te gaan ventileren. Zo houdt je je huis comfortabel en voorkom je vochtproblemen. Voor meer info bezoek het duurzaamheidscentrum op https://www.dcdeventer.nl/"
+          },
+          {
+            "type": "TextBody",
+            "font-weight": "bold",
+            "text": "Energiemonitoring"
+          },
+          {
+            "type": "TextCaption",
+            "text": "Met een HomeWizard kun realtime zien hoeveel energie je verbruikt. Zo kun je slim besparen, want sommige apparaten in huis staan onnodig aan. Van de energiecoach kun je gratis een HomeWizard lenen. Bij hun energiecafé in Braakhekke kun je de HomeWizard ophalen. Voor data check: https://noaber-energie.nl/energiecafe/"
+          },
+          {
+            "type": "TextBody",
+            "font-weight": "bold",
+            "text": "Groen gas"
+          },
+          {
+            "type": "TextCaption",
+            "text": "Groen gas is een duurzaam alternatief voor aardgas. Boeren kunnen dit maken uit hun koeienmest. Het gas kan via het bestaande aardgasnetwerk bij jouw woning komen, zodat je duurzaam je woning kunt verwarmen. Ook in Bathmen zijn plannen om met lokale boeren groen gas te maken, maar dit kan pas over een paar jaar."
+          },
+          {
+            "type": "TextBody",
+            "font-weight": "bold",
+            "text": "Andere vraag"
+          },
+          {
+            "type": "TextCaption",
+            "text": "Heb je nog een andere vraag? Je kan je vragen gerust stellen tijdens je vrijblijvende duurzaamheidsafspraak. Wil je liever eerst je vraag stellen? Sluit dan dit venster en stel je vraag naar ons via de chat."
+          },
+          {
+            "type": "Footer",
+            "label": "Terug",
+            "on-click-action": {
+              "name": "navigate",
+              "next": {
+                "type": "screen",
+                "name": "WELCOME"
+              },
+              "payload": {}
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "BAG_INPUT_SCREEN",
+      "title": "Adresgegevens invullen",
+      "data": {
+        "bag_error": {
+          "type": "boolean",
+          "__example__": false
+        }
+      },
+      "terminal": false,
+      "layout": {
+        "type": "SingleColumnLayout",
+        "children": [
+          {
+            "type": "TextHeading",
+            "text": "Adresgegevens"
+          },
+          {
+            "type": "TextBody",
+            "text": "Om te beginnen hebben we eerst een postcode en huisnummer van je nodig."
+          },
+          {
+            "type": "TextCaption",
+            "visible": "${data.bag_error}",
+            "font-weight": "italic",
+            "text": "We kunnen je adresgegevens niet automatisch ophalen. Check je postcode of huisnummer of vul je adresgegevens handmatig in."
+          },
+          {
+            "type": "EmbeddedLink",
+            "text": "Handmatig gegevens invullen",
+            "visible": "${data.bag_error}",
+            "on-click-action": {
+              "name": "navigate",
+              "next": {
+                "type": "screen",
+                "name": "BAG_RESULT_SCREEN"
+              },
+              "payload": {
+                "bag_data": {}
+              }
+            }
+          },
+          {
+            "type": "Form",
+            "name": "form",
+            "children": [
+              {
+                "type": "TextInput",
+                "required": true,
+                "label": "Postcode",
+                "name": "postcode",
+                "helper-text": "Bijvoorbeeld: \"1234AB\".",
+                "min-chars": 6,
+                "max-chars": 6
+              },
+              {
+                "type": "TextInput",
+                "required": true,
+                "label": "Huisnummer",
+                "name": "huisnummer",
+                "helper-text": "Bijvoorbeeld: \"12a\"."
+              },
+              {
+                "type": "Footer",
+                "label": "Volgende",
+                "on-click-action": {
+                  "name": "data_exchange",
+                  "payload": {
+                    "postcode": "${form.postcode}",
+                    "huisnummer": "${form.huisnummer}"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "BAG_RESULT_SCREEN",
+      "terminal": false,
+      "title": "Adresgegevens controleren",
+      "data": {
+        "bag_data": {
+          "type": "object",
+          "__example__":
+          {
+            "bouwjaar": "1995",
+            "energielabel": "C",
+            "gemeente": "Enschede",
+            "huisnummer": "12",
+            "oppervlakte": "200",
+            "postcode": "1234AB",
+            "provincie": "Overijssel",
+            "straatnaam": "Teststraat",
+            "woningtype": "2-onder-1-kap",
+            "woonplaats": "Enschede"
+          }
+        }
+      },
+      "layout": {
+        "type": "SingleColumnLayout",
+        "children": [
+          {
+            "type": "TextHeading",
+            "text": "Gegevens van je woning"
+          },
+          {
+            "type": "TextBody",
+            "text": "Controleer je gegevens. Als alle gegevens kloppen druk dan op: \"Alles klopt\"."
+          },
+          {
+            "type": "Form",
+            "name": "bag_data_form",
+            "init-values": "${data.bag_data}",
+            "children": [
+              {
+                "type": "TextInput",
+                "required": true,
+                "label": "Straatnaam",
+                "name": "straatnaam"
+              },
+              {
+                "type": "TextInput",
+                "required": true,
+                "label": "Huisnummer",
+                "name": "huisnummer"
+              },
+              {
+                "type": "TextInput",
+                "required": true,
+                "label": "Postcode",
+                "name": "postcode",
+                "min-chars": 6,
+                "max-chars": 6
+              },
+              {
+                "type": "TextInput",
+                "required": true,
+                "label": "Woonplaats",
+                "name": "woonplaats"
+              },
+              {
+                "type": "TextInput",
+                "required": true,
+                "label": "Provincie",
+                "name": "provincie"
+              },
+              {
+                "type": "TextInput",
+                "required": true,
+                "label": "Woningtype",
+                "name": "woningtype"
+              },
+              {
+                "type": "Dropdown",
+                "required": true,
+                "label": "Energielabel",
+                "name": "energielabel",
+                "data-source": [
+                  {
+                    "id": "A",
+                    "title": "Energielabel A"
+                  },
+                  {
+                    "id": "B",
+                    "title": "Energielabel B"
+                  },
+                  {
+                    "id": "C",
+                    "title": "Energielabel C"
+                  },
+                  {
+                    "id": "D",
+                    "title": "Energielabel D"
+                  },
+                  {
+                    "id": "E",
+                    "title": "Energielabel E"
+                  },
+                  {
+                    "id": "F",
+                    "title": "Energielabel F"
+                  },
+                  {
+                    "id": "G",
+                    "title": "Energielabel G"
+                  },
+                  {
+                    "id": "Onbekend",
+                    "title": "Geen energielabel of onbekend"
+                  }
+                ]
+              },
+              {
+                "type": "TextInput",
+                "required": true,
+                "label": "Oppervlakte",
+                "name": "oppervlakte",
+                "input-type": "number",
+                "helper-text": "Het grondoppervlakte van je woning (als nummer zonder m2)"
+              },
+              {
+                "type": "Footer",
+                "label": "Alles klopt",
+                "on-click-action": {
+                  "name": "navigate",
+                  "next": {
+                    "type": "screen",
+                    "name": "UTILITY_USAGE_SCREEN"
+                  },
+                  "payload": {}
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "UTILITY_USAGE_SCREEN",
+      "title": "Verbruik",
+      "data": {},
+      "layout": {
+        "type": "SingleColumnLayout",
+        "children": [
+          {
+            "type": "TextHeading",
+            "text": "Verbruik"
+          },
+          {
+            "type": "TextBody",
+            "text": "Graag zouden we ook nog even je verbruik willen weten. Als je je verbruik niet weet, kijk dan de jaarafrekening van je energieleverancier."
+          },
+          {
+            "type": "Form",
+            "name": "verbruik_form",
+            "children": [
+              {
+                "type": "TextInput",
+                "required": true,
+                "label": "Energieverbruik",
+                "name": "energieverbruik",
+                "input-type": "number"
+              },
+              {
+                "type": "TextInput",
+                "required": true,
+                "label": "Gasverbruik",
+                "name": "gasverbruik",
+                "input-type": "number"
+              },
+              {
+                "type": "Footer",
+                "label": "Volgende",
+                "on-click-action": {
+                  "name": "data_exchange",
+                  "payload": {
+                    "energieverbruik": "${form.energieverbruik}",
+                    "gasverbruik": "${form.gasverbruik}"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "RADIO_QUESTION",
+      "title": "Besparingsmaatregelen",
+      "data": {
+        "question_name": {
+          "type": "string",
+          "__example__": "dakisolatie"
+        },
+        "title": {
+          "type": "string",
+          "__example__": "Dit is een vraag?"
+        },
+        "subtitle": {
+          "type": "string",
+          "__example__": "Dit is informatie over een vraag."
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string",
+                "required": true
+              },
+              "subtitle": {
+                "type": "string",
+                "required": false
+              }
+            }
+          },
+          "__example__": [
+            {
+              "id": "1",
+              "title": "Optie 1",
+              "subtitle": "dit is optie 1"
+            },
+            {
+              "id": "2",
+              "title": "Optie 2",
+              "subtitle": "dit is optie 2"
+            }
+          ]
+        }
+      },
+      "layout": {
+        "type": "SingleColumnLayout",
+        "children": [
+          {
+            "type": "TextHeading",
+            "text": "${data.title}"
+          },
+          {
+            "type": "TextBody",
+            "text": "${data.subtitle}"
+          },
+          {
+            "type": "Form",
+            "init-values": {
+              "answer": ""
+            },
+            "name": "form",
+            "children": [
+              {
+                "type": "RadioButtonsGroup",
+                "name": "answer",
+                "required": true,
+                "data-source": "${data.options}",
+                "on-select-action": {
+                  "name": "data_exchange",
+                  "payload": {
+                    "question_name": "${data.question_name}",
+                    "answer": "${form.answer}"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "ADVIES",
+      "title": "Je duurzaamheidsadvies",
+      "data": {
+        "advies": {
+          "type": "string",
+          "__example__": "Je advies."
+        }
+      },
+      "layout": {
+        "type": "SingleColumnLayout",
+        "children": [
+          {
+            "type": "TextHeading",
+            "text": "Hierbij jouw persoonlijk duurzaamheidsadvies."
+          },
+          {
+            "type": "TextBody",
+            "text": "${data.advies}"
+          },
+          {
+            "type": "Footer",
+            "label": "Afspraak maken",
+            "on-click-action": {
+              "name": "data_exchange",
+              "payload": {}
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "HEEFT_ALLES",
+      "terminal": true,
+      "title": "Je hebt alles al",
+      "layout": {
+        "type": "SingleColumnLayout",
+        "children": [
+          {
+            "type": "TextHeading",
+            "text": "Je hebt alles al!"
+          },
+          {
+            "type": "TextBody",
+            "text": "Fantastisch! Je woning is compleet verduurzaamd. We hoeven jou niets te vertellen. Je bent een voorbeeld voor je buren!"
+          },
+          {
+            "type": "TextBody",
+            "text": "Dankjewel namens BattumUp voor het beantwoorden van de vragen."
+          },
+          {
+            "type": "Footer",
+            "label": "Sluiten",
+            "on-click-action": {
+              "name": "complete",
+              "payload": {}
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "FINAL",
+      "terminal": true,
+      "title": "Gemeente Deventer",
+      "layout": {
+        "type": "SingleColumnLayout",
+        "children": [
+          {
+            "type": "Footer",
+            "label": "Sluiten",
+            "on-click-action": {
+              "name": "complete",
+              "payload": {}
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
