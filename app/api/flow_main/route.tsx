@@ -2,9 +2,7 @@ import {
   DecryptFlowRequest,
   EncryptFlowResponse,
   getAppointmentString,
-  getDateString,
   getPrivateKey,
-  getTimeRange,
 } from "@/lib/utils";
 import {
   CreateCalendarAppointment,
@@ -15,10 +13,17 @@ import {
   DakisolatieAfwerkingDetailsQuestion,
   DakisolatieAfwerkingQuestion,
   DakisolatieQuestion,
+  GlasisolatieQuestion,
   SpouwmuurisolatieAanbouwQuestion,
   SpouwmuurisolatieKruipruimteQuestion,
   SpouwmuurisolatieQuestion,
+  VloerisolatieKruipruimteQuestion,
   VloerisolatieQuestion,
+  WarmtepompQuestion,
+  ZonnepanelenExtraQuestion,
+  ZonnepanelenQuestion,
+  ZonnepanelenSchaduwDakQuestion,
+  ZonnepanelenTypeDakQuestion,
 } from "@/app/api/flow_main/questions";
 
 //route to get the next page
@@ -87,7 +92,7 @@ export async function POST(request: Request) {
 }
 
 async function mainRouterActions(decryptedBody: any) {
-  const { screen, data, version, action } = decryptedBody;
+  const { screen, data, version, action, flow_token } = decryptedBody;
 
   //START
   if (screen == "START") {
@@ -101,7 +106,7 @@ async function mainRouterActions(decryptedBody: any) {
   if (screen == "WELCOME") {
     if (data["keuze"] == "Direct Plannen") {
       return {
-        screen: "FINAL",
+        screen: "GEGEVENS",
         data: {},
       };
     }
@@ -115,9 +120,7 @@ async function mainRouterActions(decryptedBody: any) {
 
     return {
       screen: "BAG_INPUT_SCREEN",
-      data: {
-        bag_error: false,
-      },
+      data: {},
     };
   }
 
@@ -130,7 +133,8 @@ async function mainRouterActions(decryptedBody: any) {
       return {
         screen: "BAG_INPUT_SCREEN",
         data: {
-          bag_error: true,
+          error_message:
+            "We kunnen je adresgegevens niet automatisch ophalen. Check je postcode / huisnummer of vul je adresgegevens handmatig in.",
         },
       };
     }
@@ -146,6 +150,38 @@ async function mainRouterActions(decryptedBody: any) {
   //QUESTIONS
   if (screen == "UTILITY_USAGE_SCREEN" || screen == "RADIO_QUESTION") {
     return questionsRouter(decryptedBody);
+  }
+
+  //GEGEVENS
+  if (screen == "ADVIES") {
+    return {
+      screen: "GEGEVENS",
+      data: {},
+    };
+  }
+  if (screen == "GEGEVENS") {
+    return await GetCalendarItemResponse();
+  }
+
+  if (screen == "APPOINTMENT_SLOTS") {
+    const appointment = data["slot"].split("/");
+    const appointmentString = getAppointmentString(
+      appointment[0],
+      appointment[1],
+    );
+
+    return {
+      screen: "FINAL",
+      data: {
+        slot: data["slot"],
+        appointmentString: appointmentString,
+        appointmentType: data["appointmentType"],
+      },
+    };
+  }
+
+  if (screen == "FINAL") {
+    return await CreateAppointmentResponse(decryptedBody);
   }
 }
 
@@ -175,6 +211,7 @@ function questionsRouter(decryptedBody: any): any {
         data: DakisolatieAfwerkingQuestion,
       };
     }
+
     if (data["question_name"] == "dakisolatie_afwerking") {
       if (data["answer"] == "true") {
         return {
@@ -217,14 +254,12 @@ function questionsRouter(decryptedBody: any): any {
         data: SpouwmuurisolatieAanbouwQuestion,
       };
     }
-
     if (data["question_name"] == "spouwmuurisolatie_aanbouw") {
       return {
         screen: "RADIO_QUESTION",
         data: SpouwmuurisolatieKruipruimteQuestion,
       };
     }
-
     if (data["question_name"] == "spouwmuurisolatie_kruipruimte") {
       return {
         screen: "ADVIES",
@@ -236,6 +271,185 @@ function questionsRouter(decryptedBody: any): any {
       };
     }
 
-    //TODO: Alles vanaf en inclusief vloerisolatie
+    //Vloerisolatie
+    if (data["question_name"] == "vloerisolatie") {
+      if (data["answer"] == "true") {
+        return {
+          screen: "RADIO_QUESTION",
+          data: GlasisolatieQuestion,
+        };
+      } else {
+        return {
+          screen: "RADIO_QUESTION",
+          data: VloerisolatieKruipruimteQuestion,
+        };
+      }
+    }
+    if (data["question_name"] == "vloerisolatie_kruipruimte") {
+      return {
+        screen: "ADVIES",
+        data: {
+          advies:
+            "Bedankt voor het beantwoorden van de vragen. We geven je direct een advies. \n\n" +
+            "Je hebt aangegeven dat je dak al is geïsoleerd. Je spouwmuur is reeds geïsoleerd! Je bent dus al flink op weg met energie besparen. Je vloer is nog niet geïsoleerd, we willen je graag helpen om je woning nòg duurzamer te maken.",
+        },
+      };
+    }
+
+    //Glasisolatie
+    if (data["question_name"] == "glasisolatie") {
+      if (data["answer"] == "true") {
+        return {
+          screen: "RADIO_QUESTION",
+          data: WarmtepompQuestion,
+        };
+      } else {
+        return {
+          screen: "ADVIES",
+          data: {
+            advies:
+              "Bedankt voor het beantwoorden van de vragen. We geven je direct een advies. \n\n" +
+              "Je hebt aangegeven dat je dak al is geïsoleerd. Je spouwmuur is reeds geïsoleerd! Je bent dus al flink op weg met energie besparen. Daarnaast heb je je vloer ook al geïsoleerd. Glasisolatie heb je nog niet. Dit is een goede manier om je huis optimaal te isoleren!",
+          },
+        };
+      }
+    }
+
+    //Warmtepomp
+    if (data["question_name"] == "warmtepomp") {
+      if (data["answer"] == "true") {
+        return {
+          screen: "RADIO_QUESTION",
+          data: ZonnepanelenQuestion,
+        };
+      } else {
+        return {
+          screen: "ADVIES",
+          data: {
+            advies:
+              "Bedankt voor het beantwoorden van de vragen. We geven je direct een advies. \n\n" +
+              "Je hebt aangegeven dat je dak al is geïsoleerd. Je spouwmuur is reeds geïsoleerd! Je bent dus al flink op weg met energie besparen. Daarnaast heb je je vloer ook al geïsoleerd. Glasisolatie heb je al goed voor elkaar. Je geeft aan dat je nog geen warmtepomp hebt. Wist je dat die vanaf 2026 verplicht is bij vervanging van de CV-ketel? Maak er direct werk van!",
+          },
+        };
+      }
+    }
+
+    //Zonnepanelen
+    if (data["question_name"] == "zonnepanelen") {
+      if (data["answer"] == "true") {
+        return {
+          screen: "RADIO_QUESTION",
+          data: ZonnepanelenExtraQuestion,
+        };
+      } else {
+        return {
+          screen: "RADIO_QUESTION",
+          data: ZonnepanelenTypeDakQuestion,
+        };
+      }
+    }
+    if (data["question_name"] == "zonnepanelen_extra") {
+      if (data["answer"] == "true") {
+        return {
+          screen: "ADVIES",
+          data: {
+            advies:
+              "Bedankt voor het beantwoorden van de vragen. We geven je direct een advies. \n\n" +
+              "Je hebt aangegeven dat je dak al is geïsoleerd. Je spouwmuur is reeds geïsoleerd! Je bent dus al flink op weg met energie besparen. Daarnaast heb je je vloer ook al geïsoleerd. Glasisolatie heb je al goed voor elkaar. Je hebt al een warmtepomp. Goed bezig! De zonnepanelen liggen al op het dak, maar je hebt aangegeven het systeem te willen uitbreiden. Dit is een fantastische manier om te besparen.",
+          },
+        };
+      } else {
+        return {
+          screen: "HEEFT_ALLES",
+          data: {},
+        };
+      }
+    }
+    if (data["question_name"] == "zonnepanelen_type_dak") {
+      return {
+        screen: "RADIO_QUESTION",
+        data: ZonnepanelenSchaduwDakQuestion,
+      };
+    }
+    if (data["question_name"] == "zonnepanelen_schaduw_dak") {
+      return {
+        screen: "ADVIES",
+        data: {
+          advies:
+            "Bedankt voor het beantwoorden van de vragen. We geven je direct een advies. \n\n" +
+            "Je hebt aangegeven dat je dak al is geïsoleerd. Je spouwmuur is reeds geïsoleerd! Je bent dus al flink op weg met energie besparen. Daarnaast heb je je vloer ook al geïsoleerd. Glasisolatie heb je al goed voor elkaar. Je hebt al een warmtepomp. Goed bezig! Dan blijven er alleen nog zonnepanelen over. Je eigen energie opwekken is een fantastische manier om te besparen.",
+        },
+      };
+    }
   }
+}
+
+async function GetCalendarItemResponse() {
+  const items: any[] = [];
+
+  const preferenceDate = Date.now();
+  const weeks = await GetCalendarSuggestions(preferenceDate);
+
+  weeks.map((week: any) => {
+    items.push({
+      id: `Week ${week["week"]}`,
+      title: `Week ${week["week"]}`,
+      description: week["weekString"],
+      enabled: false,
+    });
+
+    const days: any[] = week["days"];
+
+    days.map((day: any) => {
+      if (day["slots"].length > 0) {
+        day["slots"].map((slot: any) => {
+          items.push({
+            id: `${slot["start"]}/${slot["end"]}`,
+            title: getAppointmentString(slot["start"], slot["end"], "nl-NL"),
+          });
+        });
+      }
+    });
+  });
+
+  return {
+    screen: "APPOINTMENT_SLOTS",
+    data: {
+      all_slots: items,
+    },
+  };
+}
+
+async function CreateAppointmentResponse(decryptedBody: any) {
+  const { screen, data, version, action, flow_token } = decryptedBody;
+
+  const slot = data["slot"].split("/");
+
+  const start = slot[0];
+  const end = slot[1];
+
+  const opmerking = data["opmerking"] ? data["opmerking"] : "Geen opmerking";
+
+  const phoneNumber = "31614926018";
+
+  const a = await CreateCalendarAppointment(
+    start,
+    end,
+    `Afspraak met ${phoneNumber}`,
+    `Afspraak via WhatsApp. Opmerking: ${opmerking}`,
+  );
+
+  console.log("a", a);
+
+  return {
+    screen: "SUCCESS",
+    data: {
+      extension_message_response: {
+        params: {
+          flow_token,
+          //...data,
+        },
+      },
+    },
+  };
 }

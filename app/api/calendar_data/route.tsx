@@ -11,14 +11,6 @@ import {
   GetCalendarSuggestions,
 } from "@/lib/CalendarFunctions";
 
-//route to get the next page
-//route functions to fetch data for each given route
-
-enum route {
-  START = "CAL_INPUT_SCREEN",
-  CAL_INPUT_SCREEN = "FINAL",
-}
-
 export async function POST(request: Request) {
   const body = await request.json();
 
@@ -98,9 +90,7 @@ export async function POST(request: Request) {
       version,
       screen: "CAL_INPUT_SCREEN",
       data: {
-        all_slots: items, //slotsParsed
-        // 'min-date': Date.now().toString(),
-        // 'max-date': new Date().setFullYear(2024).toString()
+        all_slots: items,
       },
     };
   } else if (screen == "CAL_INPUT_SCREEN") {
@@ -126,7 +116,7 @@ export async function POST(request: Request) {
     const start = data["start"];
     const end = data["end"];
 
-    const a = await CreateCalendarAppointment(start, end);
+    const a = await CreateCalendarAppointment(start, end, "", "");
     console.log("a", a);
     //console.log("AFSPRAAK:");
     //console.info(start);
