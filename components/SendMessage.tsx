@@ -4,18 +4,22 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { SendFlowMessage } from "@/lib/WhatsApp";
+import { DisplayInvocations } from "@/components/DisplayInvocations";
 
 export function SendMessageComponent() {
   const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const [flowToken, setFlowToken] = useState<string>();
   const [message, setMessage] = useState<any>();
 
-  const onSend = async () => {
+  const onSend = () => {
     if (!phoneNumber || phoneNumber === "") {
       return;
     }
 
-    const message = await SendFlowMessage(phoneNumber);
-    setMessage(message);
+    const flowTokenT = crypto.randomUUID();
+    setFlowToken(flowTokenT);
+
+    SendFlowMessage(phoneNumber, flowTokenT).then((a) => setMessage(a));
   };
 
   return (
@@ -37,6 +41,7 @@ export function SendMessageComponent() {
           </p>
         </>
       )}
+      <div>{flowToken && <DisplayInvocations flow_token={flowToken} />}</div>
     </div>
   );
 }

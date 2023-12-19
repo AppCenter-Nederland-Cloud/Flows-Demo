@@ -25,9 +25,11 @@ import {
   ZonnepanelenSchaduwDakQuestion,
   ZonnepanelenTypeDakQuestion,
 } from "@/app/api/flow_main/questions";
-
-//route to get the next page
-//route functions to fetch data for each given route
+import {
+  updateDatabaseObject,
+  updateDatabaseProperty,
+} from "@/lib/DigitalOcean";
+import { UpdateCommuniQateContact } from "@/lib/CommuniQate";
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -39,7 +41,7 @@ export async function POST(request: Request) {
 
   console.log("decrypted request:", decryptedBody);
 
-  const { screen, data, version, action } = decryptedBody;
+  const { screen, data, version, action, flow_token } = decryptedBody;
 
   //handle default actions:
   if (action === "INIT") {
@@ -87,6 +89,9 @@ export async function POST(request: Request) {
     aesKeyBuffer,
     initialVectorBuffer,
   );
+
+  //currentScreen
+  await updateDatabaseProperty(flow_token, "screen", screen);
 
   return new Response(res);
 }
@@ -139,6 +144,8 @@ async function mainRouterActions(decryptedBody: any) {
       };
     }
 
+    await updateDatabaseProperty(flow_token, "BAG", bag_data);
+
     return {
       screen: "BAG_RESULT_SCREEN",
       data: {
@@ -149,7 +156,7 @@ async function mainRouterActions(decryptedBody: any) {
 
   //QUESTIONS
   if (screen == "UTILITY_USAGE_SCREEN" || screen == "RADIO_QUESTION") {
-    return questionsRouter(decryptedBody);
+    return await questionsRouter(decryptedBody);
   }
 
   //GEGEVENS
@@ -160,6 +167,13 @@ async function mainRouterActions(decryptedBody: any) {
     };
   }
   if (screen == "GEGEVENS") {
+    await UpdateCommuniQateContact(
+      data["voornaam"],
+      data["achternaam"],
+      data["email"],
+      flow_token,
+    );
+
     return await GetCalendarItemResponse();
   }
 
@@ -181,16 +195,27 @@ async function mainRouterActions(decryptedBody: any) {
   }
 
   if (screen == "FINAL") {
+    await updateDatabaseProperty(flow_token, "appointment", {
+      date: data["date"],
+      type: data["type"],
+      comment: data["comment"],
+    });
+
     return await CreateAppointmentResponse(decryptedBody);
   }
 }
 
-function questionsRouter(decryptedBody: any): any {
+async function questionsRouter(decryptedBody: any): Promise<any> {
   //current
 
-  const { screen, data } = decryptedBody;
+  const { screen, data, flow_token } = decryptedBody;
 
   if (screen == "UTILITY_USAGE_SCREEN") {
+    await updateDatabaseProperty(flow_token, "utility", {
+      energieverbruik: data["energieverbruik"],
+      gasverbruik: data["gasverbruik"],
+    });
+
     return {
       screen: "RADIO_QUESTION",
       data: DakisolatieQuestion,
@@ -198,6 +223,13 @@ function questionsRouter(decryptedBody: any): any {
   }
 
   if (screen == "RADIO_QUESTION") {
+    await updateDatabaseObject(
+      flow_token,
+      "questions",
+      data["question_name"],
+      data["answer"],
+    );
+
     //Dakisolatie
     if (data["question_name"] == "dakisolatie") {
       if (data["answer"] == "true") {
@@ -439,15 +471,12 @@ async function CreateAppointmentResponse(decryptedBody: any) {
     `Afspraak via WhatsApp. Opmerking: ${opmerking}`,
   );
 
-  console.log("a", a);
-
   return {
     screen: "SUCCESS",
     data: {
       extension_message_response: {
         params: {
           flow_token,
-          //...data,
         },
       },
     },

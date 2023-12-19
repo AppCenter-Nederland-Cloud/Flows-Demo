@@ -1,6 +1,9 @@
+"use server";
+
+import { createDatabaseInvocation } from "@/lib/DigitalOcean";
 type Mode = "draft" | "published";
 
-export async function SendFlowMessage(phoneNumber: string) {
+export async function SendFlowMessage(phoneNumber: string, flowToken: string) {
   const mode: Mode = "draft";
 
   const phoneNumberId = process.env.NEXT_PUBLIC_META_PHONE_NUMBER_ID;
@@ -12,8 +15,6 @@ export async function SendFlowMessage(phoneNumber: string) {
       error: ".env not set!",
     };
   }
-
-  const flowToken = crypto.randomUUID();
 
   const body = {
     messaging_product: "whatsapp",
@@ -38,6 +39,8 @@ export async function SendFlowMessage(phoneNumber: string) {
       },
     },
   };
+
+  await createDatabaseInvocation(flowToken, phoneNumber);
 
   return await fetch(
     `https://graph.facebook.com/v18.0/${phoneNumberId}/messages`,

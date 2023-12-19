@@ -1,3 +1,5 @@
+"use server";
+
 async function getBag(query: string) {
   const BAG_API_KEY = process.env.BAG_API_KEY;
 
