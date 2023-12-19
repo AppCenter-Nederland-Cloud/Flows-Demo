@@ -26,7 +26,14 @@ export function QuestionsDataCard(props: QuestionsDataCardProps) {
         <ul className="max-w-md space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400">
           {keys.map((k, key) => (
             <li key={key}>
-              {k}: <Badge>{questions[k] == "true" ? "Ja" : "Nee"}</Badge>
+              {k}:{" "}
+              <Badge>
+                {questions[k] == "true" || questions[k] == "false"
+                  ? questions[k] == "true"
+                    ? "Ja"
+                    : "Nee"
+                  : questions[k]}
+              </Badge>
             </li>
           ))}
         </ul>

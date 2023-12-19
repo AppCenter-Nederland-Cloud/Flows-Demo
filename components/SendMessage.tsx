@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { SendFlowMessage } from "@/lib/WhatsApp";
 import { DisplayInvocations } from "@/components/DisplayInvocations";
+import { Badge } from "@/components/ui/badge";
 
 export function SendMessageComponent() {
   const [phoneNumber, setPhoneNumber] = useState<string>("");
@@ -23,25 +24,28 @@ export function SendMessageComponent() {
   };
 
   return (
-    <div>
+    <div style={{ margin: "25px" }}>
       <Input
         type="text"
         value={phoneNumber}
         onChange={(e) => setPhoneNumber(e.target.value)}
         placeholder={"Telefoonnummer"}
+        style={{ width: 250 }}
       />
       <Button onClick={onSend} disabled={!phoneNumber || phoneNumber === ""}>
         verstuur flow
       </Button>
       {message && (
-        <>
-          <h3>Status:</h3>
-          <p>
+        <h3>
+          Status:{" "}
+          <Badge variant={message.error ? "destructive" : "default"}>
             {message.error ? "Geen geldig telefoonnummer" : "Bericht verstuurd"}
-          </p>
-        </>
+          </Badge>
+        </h3>
       )}
-      <div>{flowToken && <DisplayInvocations flow_token={flowToken} />}</div>
+      <div style={{ paddingTop: "25px" }}>
+        {flowToken && <DisplayInvocations flow_token={flowToken} />}
+      </div>
     </div>
   );
 }
