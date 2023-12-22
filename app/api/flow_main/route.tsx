@@ -26,6 +26,7 @@ import {
   ZonnepanelenTypeDakQuestion,
 } from "@/app/api/flow_main/questions";
 import {
+  getInvocation,
   updateDatabaseObject,
   updateDatabaseProperty,
 } from "@/lib/DigitalOcean";
@@ -34,7 +35,8 @@ import { UpdateCommuniQateContact } from "@/lib/CommuniQate";
 export async function POST(request: Request) {
   const body = await request.json();
 
-  const privateKey = getPrivateKey();
+  const passphrase = process.env.PRIVATE_KEY_PASSPHRASE || "";
+  const privateKey = getPrivateKey(passphrase);
 
   const { decryptedBody, aesKeyBuffer, initialVectorBuffer } =
     DecryptFlowRequest(body, privateKey);
@@ -96,7 +98,7 @@ export async function POST(request: Request) {
   return new Response(res);
 }
 
-async function mainRouterActions(decryptedBody: any) {
+export async function mainRouterActions(decryptedBody: any) {
   const { screen, data, version, action, flow_token } = decryptedBody;
 
   //START
@@ -419,8 +421,7 @@ async function questionsRouter(decryptedBody: any): Promise<any> {
 async function GetCalendarItemResponse() {
   const items: any[] = [];
 
-  const preferenceDate = Date.now();
-  const weeks = await GetCalendarSuggestions(preferenceDate);
+  const weeks = await GetCalendarSuggestions();
 
   weeks.map((week: any) => {
     items.push({
@@ -460,9 +461,11 @@ async function CreateAppointmentResponse(decryptedBody: any) {
   const start = slot[0];
   const end = slot[1];
 
-  const opmerking = data["opmerking"] ? data["opmerking"] : "Geen opmerking";
+  const opmerking = data["comment"] ? data["comment"] : "Geen opmerking";
 
-  const phoneNumber = "31614926018";
+  const flowData = await getInvocation(flow_token);
+
+  const phoneNumber = flowData["phoneNumber"];
 
   const a = await CreateCalendarAppointment(
     start,

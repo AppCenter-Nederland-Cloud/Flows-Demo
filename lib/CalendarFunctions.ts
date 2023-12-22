@@ -1,6 +1,6 @@
 "use server";
 
-export async function GetCalendarSuggestions(preferenceDate?: number) {
+export async function GetCalendarSuggestions() {
   const digitalOceanUrl = process.env.DIGITAL_OCEAN_URL;
   const digitalOceanAuth = process.env.DIGITAL_OCEAN_AUTH;
   const communiqateApiKey = process.env.COMMUNIQATE_API_KEY;

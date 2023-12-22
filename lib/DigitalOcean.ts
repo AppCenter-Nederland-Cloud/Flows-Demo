@@ -7,6 +7,7 @@ const credentials: AwsCredentialIdentity = {
   accessKeyId: process.env.DO_KEY || "",
   secretAccessKey: process.env.DO_SECRET || "",
 };
+
 const s3Client = new S3({
   forcePathStyle: false,
   endpoint: process.env.DO_ENDPOINT,

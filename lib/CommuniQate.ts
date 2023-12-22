@@ -2,6 +2,9 @@
 
 import { getInvocation, updateDatabaseProperty } from "@/lib/DigitalOcean";
 
+/**
+ * Updates a contact in CommuniQate for the organization defined in the .env
+ */
 export async function UpdateCommuniQateContact(
   first_name: string,
   last_name: string,
