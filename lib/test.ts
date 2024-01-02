@@ -8,7 +8,7 @@ import {createDatabaseInvocation} from "./DigitalOcean";
 test('Integratie - BAG', async () => {
     const bagInformation = await getBagInformation('7546PD 412');
     expect(bagInformation.success).toEqual(true);
-}, 5000);
+}, 15000);
 
 test('Integratie - Google Calendar', async () => {
     const cal = await GetCalendarSuggestions();
