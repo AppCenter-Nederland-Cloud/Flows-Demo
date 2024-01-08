@@ -79,40 +79,11 @@ export function DecryptFlowRequest(body: any, privateKey: KeyObject) {
  * Get KeyObject of private key used for encryption
  */
 export function getPrivateKey(passphrase?: string) {
-  //const privateKey = process.env.PRIVATE_KEY || "";
+
+  const privateKey = "PRIVATE_KEY_HERE";
 
   return crypto.createPrivateKey({
-    key: `-----BEGIN RSA PRIVATE KEY-----
-Proc-Type: 4,ENCRYPTED
-DEK-Info: DES-EDE3-CBC,0B9089B8D71E2AB3
-
-4XujRjpnq7KunWqQMcb4Mgx6lSSI/wWiu1dgwlTxULwW0NNOoJOeovwqUpqO/rc9
-63dfuy9NMV1sNXTb7VlmbXSBF7/YLywz63lvPc7L3EyL56SUkYt60HRbmiuZT25w
-wtPJ6M5UJiAJ9Ky4w2Z7giAL3PFDZCLY8JC9G8/5xNlhlZ3uwiigzHAL/UCq0HsY
-9lQdjwvHmiWmmEh7nIIT0uzjOVO63RL5OGDJLkTQLd18A8YnaKQJXhm22LEFwJpH
-jU44wxeDAVjhToJQgbMrL09efMnV0jdsSjCP/SSZR0Nzu0eFi/mGV80hlaPP1IzR
-dlJ9QuLSzf2z3PDWo93sJLgm5eQVuoex+u2hYBF27GUtjOhEOFcejncrLyDbZ3gP
-ReRDzLUuhNDa4Dwfh373Vjgw9m06ruvP3kDJNWMJtXAecc28TyHQq/nJTdIq4Y1G
-c5zDNHLUXb7/exLKZB7c6ofR0b5oK3BMsuVOvITuLWlvyD37sbG7Z3NWBL+z+mmJ
-tHhiF0cKuv9D4AXSuwg5YwGngB8xLSkj4iHbDO6ywZmfIPYcq6/JQuhQWiAijk6i
-L20aB5nvAIL7ZsOG96yT2n1gEeiq1OFYSFoWub5C6/v0u07iQobBrIEvcelAkNyz
-2C7Q9LRh+wM29FUiAPyVFODd1uUt3h4Ethita+3it7L08hwu87sBBC1zx1kEB06x
-3+MggrIOBcfY2uvuVcWLJDcrWfRfll1JizLjv0K3T7TzA92k1CYft26G+Un8G070
-HB4HcA55silzpTRDanwyhb06GkNDfVq/J5C0yNZzmq9S+uOx4iEzG9upm1Bg5aKF
-GZ0q4qsGfshKr3AQr3dibjHki0IF59OGXS8WUZUamShzFpW1AMfk5kKHWw8S+xyg
-tszybcFV4ez5NlAEyWbTt8efyPigccCy2jj/NAXnfcMNAwlLdhgRstHj6ET+yfuh
-WgT4K8UYOqWdappuprI9xGefsvkLN663lGv8fc9cEQ0gf0t5duA6pdMJO3wAnoiX
-1r4Hi1shqqpTvzRrh0Z+e8YqYvY7chOV7RkUFBF+IQSJCODUypyuehmkuvQSgaiY
-Ei0u0Qaz+0av1UTAw2v/yYNYyw2GDxgmpBPmVUZMbEjFBAkmGtIvMO3Z6ExzB2mg
-dta2XPrPlUY81EmfIuCfk+0YgljG5gMaaLrJqIksaq1FuIrf4Gqdp/7ol5HG+JSH
-HQC8Yo65EkF5WJd/2YK14biPfJ4bANDWfa95Z5wox4b+Z2dwF9sQV246iDxIVlDE
-1J2OQUJTZqO/exca+FbQ6jPPn7s6Wub/H6Ks5lOBJhCR5nbTktisZBw/6q4QBdoB
-BHL7xY8hVuTnG6MbAOEXrVjE+ae2VuuQLZrhbAce9zeq7NWVdsX39K9Uw9DbN70l
-w4yem49vqQeYlWcnxuvc6U+rCZ8K4C0311J1CPhgTmyW0Mue6SnMhswW6yaeV262
-VpICYOJK3wXSLvVpY5hoAMyyhVooX9Y90M1ZxeUEHlCD5TBD9jnabeLrbN7y5bIa
-TOBcdfu6ha3MtDlLyzOxPxzMvQ7uXyklFzrltL35Nux1MeJewlzZtP6uboJNWj5L
------END RSA PRIVATE KEY-----
-`,
+    key: privateKey,
     passphrase: passphrase,
   });
 }
